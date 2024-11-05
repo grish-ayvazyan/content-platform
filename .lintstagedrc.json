@@ -1,0 +1,4 @@
+{
+    "**/*.[tj]s?(x)": ["pretty-quick --verbose --staged", "eslint --fix"],
+    "*": "prettier --write --ignore-unknown"
+}
