@@ -1,13 +1,15 @@
-import { Loader, LoaderWrapper } from "./style";
+import { LoaderWrapper, StyledLoader } from "./styles.ts";
 
-const LoaderComponent = () => {
+const Loader = ({ hasContainer = false }: { hasContainer?: boolean }) => {
+    if (hasContainer) {
+        return <StyledLoader />;
+    }
+
     return (
         <LoaderWrapper>
-            <Loader />
+            <StyledLoader />
         </LoaderWrapper>
     );
 };
 
-LoaderComponent.displayName = "Loader";
-
-export default LoaderComponent;
+export default Loader;
