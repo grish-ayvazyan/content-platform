@@ -6,6 +6,6 @@ export const ROUTES_CONFIG = {
     ROOT: "/",
     PHOTO_GRID: {
         ROOT: "/photo-grid",
-        PHOTO_DETAIL: ":photoId",
+        PHOTO_DETAIL: `/photo-grid/:photoId`,
     },
 };

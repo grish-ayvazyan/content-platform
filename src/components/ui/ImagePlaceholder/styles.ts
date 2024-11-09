@@ -7,7 +7,7 @@ export const Placeholder = styled.div.attrs<ImagePlaceholderProps>((props) => ({
         width: props.width,
         height: props.height,
     },
-}))<ImagePlaceholderProps>`
+}))`
     display: flex;
     justify-content: center;
     align-items: center;

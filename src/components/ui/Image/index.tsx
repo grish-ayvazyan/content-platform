@@ -1,10 +1,11 @@
-import { ImgHTMLAttributes, useState } from "react";
+import { useState } from "react";
 
 import { StyledImage } from "@/components/ui/Image/styles.ts";
+import { ImageProps } from "@/components/ui/Image/types.ts";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 
-const Image = (props: ImgHTMLAttributes<HTMLImageElement> & { $avgColor: string }) => {
-    const { src, alt, loading, $avgColor } = props;
+const Image = (props: ImageProps) => {
+    const { src, width, height, alt, loading, $avgColor } = props;
     const [isLoaded, setIsLoaded] = useState(false);
 
     return (
@@ -16,8 +17,8 @@ const Image = (props: ImgHTMLAttributes<HTMLImageElement> & { $avgColor: string 
                 onLoad={() => setIsLoaded(true)}
                 loading={loading}
                 $isLoaded={isLoaded}
-                width="100%"
-                height="100%"
+                width={width || "100%"}
+                height={height || "100%"}
             />
         </>
     );

@@ -12,6 +12,7 @@ export const Item = styled.div.attrs<{ $position: ItemPosition }>((props) => ({
     overflow: hidden;
     transition: transform 0.3s ease;
     border-radius: 12px;
+    border: 2px solid transparent;
 
     img {
         transition: transform 0.2s ease-in-out;
@@ -19,9 +20,12 @@ export const Item = styled.div.attrs<{ $position: ItemPosition }>((props) => ({
 
     &:hover {
         cursor: pointer;
+        border-color: #1abc9c;
+
         img {
             transform: scale(1.1);
         }
+
         p {
             opacity: 1;
             z-index: 1;
@@ -35,6 +39,7 @@ export const StyledDescription = styled.p`
     justify-content: center;
     position: absolute;
     bottom: 0;
+    font-size: 12px;
     text-align: center;
     color: black;
     background-color: #ffffff82;

@@ -8,7 +8,7 @@ import { LoaderWrapperBottom } from "@/components/ui/Loader/styles.ts";
 import { useFetchPhotos } from "@/hooks/useFetchPhotos.tsx";
 import { Photo } from "pexels";
 
-const COLUMN_WIDTH = 300;
+const COLUMN_WIDTH = 250;
 const GAP = 16;
 const VIEWPORT_BUFFER = 800;
 
