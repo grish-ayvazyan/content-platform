@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import { QUERY_KEYS } from "@/services/api/constants.ts";
 import { fetchPhoto } from "@/services/api/pexelsApi";
+import { Photo } from "@/services/api/types.ts";
 import { useQuery } from "@tanstack/react-query";
-import { Photo } from "pexels";
 
 export const useFetchPhoto = (id: string) => {
     const { data, refetch, isFetching, isLoading, isError, isRefetchError, isLoadingError, error } = useQuery<Photo>({

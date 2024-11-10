@@ -8,7 +8,7 @@ import { LoaderWrapperBottom } from "@/components/ui/Loader/styles.ts";
 import ErrorComponent from "@/containers/ErrorBoundary/ErrorComponent.tsx";
 import { useFetchPhotos } from "@/hooks/useFetchPhotos.tsx";
 import { UNEXPECTED_ERROR_OCCURRED } from "@/services/api/constants.ts";
-import { Photo } from "pexels";
+import { Photo } from "@/services/api/types.ts";
 
 const COLUMN_WIDTH = 250;
 const GAP = 16;

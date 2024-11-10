@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import { QUERY_KEYS } from "@/services/api/constants.ts";
 import { fetchPhotos } from "@/services/api/pexelsApi";
+import { PhotosWithTotalResults } from "@/services/api/types.ts";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { PhotosWithTotalResults } from "pexels";
 
 export const useFetchPhotos = () => {
     const {

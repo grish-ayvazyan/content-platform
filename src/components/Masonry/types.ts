@@ -1,4 +1,4 @@
-import { Photo } from "pexels";
+import { Photo } from "@/services/api/types.ts";
 
 export type ItemPosition = {
     left: number;
