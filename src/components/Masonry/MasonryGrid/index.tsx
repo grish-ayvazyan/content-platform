@@ -5,7 +5,9 @@ import { MasonryItem } from "@/components/Masonry/MasonryItem";
 import { ItemPosition } from "@/components/Masonry/types.ts";
 import Loader from "@/components/ui/Loader";
 import { LoaderWrapperBottom } from "@/components/ui/Loader/styles.ts";
+import ErrorComponent from "@/containers/ErrorBoundary/ErrorComponent.tsx";
 import { useFetchPhotos } from "@/hooks/useFetchPhotos.tsx";
+import { UNEXPECTED_ERROR_OCCURRED } from "@/services/api/constants.ts";
 import { Photo } from "pexels";
 
 const COLUMN_WIDTH = 250;
@@ -17,7 +19,8 @@ export const MasonryGrid = () => {
     const gridRef = useRef<HTMLDivElement>(null);
     const [activeItems, setActiveItems] = useState<Photo[]>([]);
     const [itemPositions, setItemPositions] = useState<Record<number, ItemPosition>>({});
-    const { photos, isFetchingNextPage, fetchNextPage, isFetchNextPageError, isFetching } = useFetchPhotos();
+    const { photos, error, hasError, isFetchNextPageError, isFetchingNextPage, isFetching, fetchNextPage, refetch } =
+        useFetchPhotos();
 
     //TODO: create hooks for helpers
     const calculateLayout = useCallback(() => {
@@ -106,7 +109,14 @@ export const MasonryGrid = () => {
         [isFetchingNextPage]
     );
 
-    //TODO: Implement handleRetry logic and error
+    if (hasError || isFetchNextPageError) {
+        return (
+            <ErrorComponent
+                errorMessage={error?.message || UNEXPECTED_ERROR_OCCURRED}
+                handleRetry={isFetchNextPageError ? fetchNextPage : refetch}
+            />
+        );
+    }
 
     if (isFetching && photos.length === 0) return <Loader />;
 
