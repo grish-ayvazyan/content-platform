@@ -32,7 +32,7 @@ export const fetchPhotos = async (page: number): Promise<PhotosWithTotalResults>
         }
     } catch (error) {
         console.error("Error fetching photos from Pexels API:", error);
-        throw new Error("Failed to fetch photos");
+        throw error;
     }
 };
 

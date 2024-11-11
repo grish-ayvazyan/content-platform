@@ -10,7 +10,6 @@ import { useFetchPhotos } from "@/hooks/useFetchPhotos.tsx";
 import { UNEXPECTED_ERROR_OCCURRED } from "@/services/api/constants.ts";
 import { Photo } from "@/services/api/types.ts";
 
-const COLUMN_WIDTH = 250;
 const GAP = 16;
 const VIEWPORT_BUFFER = 800;
 
@@ -19,31 +18,31 @@ export const MasonryGrid = () => {
     const gridRef = useRef<HTMLDivElement>(null);
     const [activeItems, setActiveItems] = useState<Photo[]>([]);
     const [itemPositions, setItemPositions] = useState<Record<number, ItemPosition>>({});
+    const [columnWidth, setColumnWidth] = useState(250);
     const { photos, error, hasError, isFetchNextPageError, isFetchingNextPage, isFetching, fetchNextPage, refetch } =
         useFetchPhotos();
 
-    //TODO: create hooks for helpers
     const calculateLayout = useCallback(() => {
         if (!gridRef.current || !photos.length) return;
 
         const gridWidth = gridRef.current.offsetWidth;
-        const columnCount = Math.floor((gridWidth + GAP) / (COLUMN_WIDTH + GAP));
+        const columnCount = Math.floor((gridWidth + GAP) / (columnWidth + GAP));
         const columnHeights = Array(columnCount).fill(0);
         const newItemPositions: Record<number, ItemPosition> = {};
 
         photos.forEach((photo) => {
             const shortestColumn = columnHeights.indexOf(Math.min(...columnHeights));
-            const left = shortestColumn * (COLUMN_WIDTH + GAP);
+            const left = shortestColumn * (columnWidth + GAP);
             const aspectRatio = photo.width / photo.height || 1;
-            const height = COLUMN_WIDTH / aspectRatio;
+            const height = columnWidth / aspectRatio;
 
-            newItemPositions[photo.id] = { left, top: columnHeights[shortestColumn], width: COLUMN_WIDTH, height };
+            newItemPositions[photo.id] = { left, top: columnHeights[shortestColumn], width: columnWidth, height };
             columnHeights[shortestColumn] += height + GAP;
         });
 
         setItemPositions(newItemPositions);
         gridRef.current.style.height = `${Math.max(...columnHeights)}px`;
-    }, [photos]);
+    }, [photos, columnWidth]);
 
     const updateActiveItems = useCallback(() => {
         if (!containerRef.current) return;
@@ -60,19 +59,49 @@ export const MasonryGrid = () => {
         setActiveItems(newActiveItems);
     }, [photos, itemPositions]);
 
-    const handleScroll = useCallback(() => {
+    const handleScroll = useCallback(async () => {
         updateActiveItems();
 
-        if (
-            containerRef.current &&
-            containerRef.current.scrollHeight - containerRef.current.scrollTop <=
-                containerRef.current.clientHeight + VIEWPORT_BUFFER &&
-            !isFetchingNextPage &&
-            !isFetchNextPageError
-        ) {
-            fetchNextPage();
+        const container = containerRef.current;
+        if (!container) return;
+
+        const nearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + VIEWPORT_BUFFER;
+
+        if (nearBottom && !isFetchingNextPage && !isFetchNextPageError) {
+            await fetchNextPage();
+
+            if (container.scrollHeight <= container.clientHeight) {
+                await fetchNextPage();
+            }
         }
     }, [fetchNextPage, isFetchNextPageError, isFetchingNextPage, updateActiveItems]);
+
+    const calculateColumnWidth = useCallback(() => {
+        if (!gridRef.current) return;
+
+        const gridWidth = gridRef.current.offsetWidth;
+        let columnCount = Math.floor(gridWidth / 250);
+        if (columnCount < 1) columnCount = 1;
+        const newColumnWidth = (gridWidth - (columnCount - 1) * GAP) / columnCount;
+        setColumnWidth(newColumnWidth);
+    }, []);
+
+    useEffect(() => {
+        const fillViewportWithContent = async () => {
+            if (!containerRef.current || !gridRef.current) return;
+
+            // Calculate if content is smaller than the viewport height
+            while (
+                gridRef.current.scrollHeight <= containerRef.current.clientHeight &&
+                !isFetchingNextPage &&
+                !isFetchNextPageError
+            ) {
+                await fetchNextPage();
+            }
+        };
+
+        fillViewportWithContent();
+    }, [photos, isFetchingNextPage, isFetchNextPageError]);
 
     useEffect(() => {
         calculateLayout();
@@ -92,13 +121,17 @@ export const MasonryGrid = () => {
 
     useEffect(() => {
         const handleResize = () => {
-            calculateLayout();
-            updateActiveItems();
+            calculateColumnWidth();
+            if (photos.length > 0) {
+                calculateLayout();
+                updateActiveItems();
+            }
         };
 
         window.addEventListener("resize", handleResize);
+        handleResize();
         return () => window.removeEventListener("resize", handleResize);
-    }, [calculateLayout, updateActiveItems]);
+    }, [photos.length]);
 
     const loader = useMemo(
         () => (
@@ -120,9 +153,9 @@ export const MasonryGrid = () => {
 
     if (isFetching && photos.length === 0) return <Loader />;
 
-    const renderMasonryItem = (photo: Photo) => {
+    const renderMasonryItem = (photo: Photo, index: number) => {
         const position = itemPositions[photo.id];
-        return position && <MasonryItem key={photo.id} photo={photo} position={position} />;
+        return position && <MasonryItem key={`${photo.id}-${index}`} photo={photo} position={position} />;
     };
 
     return (
