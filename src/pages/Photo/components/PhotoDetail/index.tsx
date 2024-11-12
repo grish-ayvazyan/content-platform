@@ -17,13 +17,11 @@ const UNTITLED_PHOTO = "Untitled Photo";
 
 const PhotoDetail = memo(
     ({ photo: { width, height, src, avg_color, alt, photographer_url, photographer } }: PhotoDetailProps) => {
-        const ratio = useMemo(() => width / height, [width, height]);
         const isLandscape = useMemo(() => width > height, [width, height]);
-
         return (
             <Content>
                 <FlexWrapper>
-                    <ImageWrapper $ratio={ratio} $isLandscape={isLandscape}>
+                    <ImageWrapper $isLandscape={isLandscape}>
                         <Image
                             src={src.original}
                             alt={alt || UNTITLED_PHOTO}

@@ -10,6 +10,7 @@ export const Content = styled.div`
     border-radius: 32px;
     gap: 20px;
     margin-top: 20px;
+    overflow: hidden;
 
     @media (max-width: 1024px) {
         flex-direction: column-reverse;
@@ -18,33 +19,18 @@ export const Content = styled.div`
 
 export const FlexWrapper = styled.div`
     display: flex;
-    flex: 2;
+    flex: 2 1 0;
     align-items: center;
     justify-content: center;
+    overflow-y: hidden;
 `;
 
-export const ImageWrapper = styled.div<{ $ratio: number; $isLandscape: boolean }>`
+export const ImageWrapper = styled.div<{ $isLandscape: boolean }>`
     border-radius: 25px;
     overflow: hidden;
-
-    ${({ $isLandscape, $ratio }) =>
-        !$isLandscape &&
-        `
-        width: 100%;
-        height: 700px;
-        max-width: ${700 * $ratio}px;
-        margin: 0 auto;
-
-    @media (max-width: 1024px) {
-        height: 600px;
-        max-width: ${600 * $ratio}px;
-    }
-
-    @media (max-width: 768px) {
-        height: 500px;
-        max-width: ${500 * $ratio}px;
-    }
-    `}
+    height: ${({ $isLandscape }) => ($isLandscape ? "auto" : "100%")};
+    max-width: 100%;
+    max-height: 100%;
 `;
 
 export const Description = styled.div`
@@ -67,11 +53,18 @@ export const Title = styled.h2`
     font-size: 28px;
     font-weight: 600;
     margin-bottom: 12px;
+    @media (max-width: 768px) {
+        font-size: 16px;
+    }
 `;
 
 export const PhotographerInfo = styled.p`
     font-size: 18px;
     font-weight: 600;
+
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
 
     span {
         margin-left: 4px;
