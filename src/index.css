@@ -11,6 +11,21 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    /* Primary Colors */
+    --primary: #3498db;
+    --primary-hover: #1abc9c;
+    --black: black;
+
+    /* Background Colors */
+    --background: #414141;
+    --background-opacity: #ffffff82;
+
+    /* Destructive Colors */
+    --destructive: #dc3545;
+    --destructive-hover: #c82333;
+
+    --border-transparent: transparent;
 }
 
 * {

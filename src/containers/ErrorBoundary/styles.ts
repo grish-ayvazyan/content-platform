@@ -22,13 +22,13 @@ export const ErrorMessage = styled.p`
 
 export const ReloadButton = styled.button`
     padding: 12px 24px;
-    background-color: #3498db;
+    background-color: var(--primary);
     border: none;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: #1abc9c;
+        background-color: var(--primary-hover);
     }
 `;

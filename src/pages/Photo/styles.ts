@@ -14,7 +14,7 @@ export const PhotoDetailWrapper = styled.div`
 export const StyledLink = styled(Link)`
     display: flex;
     align-items: center;
-    color: #3498db;
+    color: var(--primary);
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
@@ -24,6 +24,6 @@ export const StyledLink = styled(Link)`
     }
 
     &:hover {
-        color: #1abc9c;
+        color: var(--primary-hover);
     }
 `;

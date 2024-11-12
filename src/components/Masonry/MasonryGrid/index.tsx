@@ -22,6 +22,7 @@ export const MasonryGrid = () => {
     const { photos, error, hasError, isFetchNextPageError, isFetchingNextPage, isFetching, fetchNextPage, refetch } =
         useFetchPhotos();
 
+    //TODO: create hooks for helpers
     const calculateLayout = useCallback(() => {
         if (!gridRef.current || !photos.length) return;
 

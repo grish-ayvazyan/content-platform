@@ -6,7 +6,7 @@ export const Content = styled.div`
     width: 100%;
     padding: 16px;
     max-width: 1200px;
-    background-color: #414141;
+    background-color: var(--background);
     border-radius: 32px;
     gap: 20px;
     margin-top: 20px;
@@ -81,14 +81,14 @@ export const PhotographerInfo = styled.p`
 `;
 
 export const ProfileLink = styled.a`
-    color: #3498db;
+    color: var(--primary);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease;
     margin-left: 4px;
 
     &:hover {
-        color: #1abc9c;
+        color: var(--primary-hover);
     }
     & svg {
         width: 20px;
