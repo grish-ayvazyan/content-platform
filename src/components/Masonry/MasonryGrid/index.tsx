@@ -12,17 +12,16 @@ import { Photo } from "@/services/api/types.ts";
 
 const GAP = 16;
 const VIEWPORT_BUFFER = 800;
-
 export const MasonryGrid = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const gridRef = useRef<HTMLDivElement>(null);
     const [activeItems, setActiveItems] = useState<Photo[]>([]);
     const [itemPositions, setItemPositions] = useState<Record<number, ItemPosition>>({});
     const [columnWidth, setColumnWidth] = useState(250);
+
     const { photos, error, hasError, isFetchNextPageError, isFetchingNextPage, isFetching, fetchNextPage, refetch } =
         useFetchPhotos();
 
-    //TODO: create hooks for helpers
     const calculateLayout = useCallback(() => {
         if (!gridRef.current || !photos.length) return;
 
@@ -41,7 +40,12 @@ export const MasonryGrid = () => {
             columnHeights[shortestColumn] += height + GAP;
         });
 
-        setItemPositions(newItemPositions);
+        setItemPositions((prev) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newItemPositions)) {
+                return newItemPositions;
+            }
+            return prev;
+        });
         gridRef.current.style.height = `${Math.max(...columnHeights)}px`;
     }, [photos, columnWidth]);
 
@@ -57,7 +61,12 @@ export const MasonryGrid = () => {
             return position ? position.top < visibleBottom && position.top + position.height > visibleTop : false;
         });
 
-        setActiveItems(newActiveItems);
+        setActiveItems((prev) => {
+            if (JSON.stringify(prev) !== JSON.stringify(newActiveItems)) {
+                return newActiveItems;
+            }
+            return prev;
+        });
     }, [photos, itemPositions]);
 
     const handleScroll = useCallback(async () => {
@@ -84,14 +93,27 @@ export const MasonryGrid = () => {
         let columnCount = Math.floor(gridWidth / 250);
         if (columnCount < 1) columnCount = 1;
         const newColumnWidth = (gridWidth - (columnCount - 1) * GAP) / columnCount;
-        setColumnWidth(newColumnWidth);
+
+        setColumnWidth((prev) => (prev !== newColumnWidth ? newColumnWidth : prev));
     }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            calculateColumnWidth();
+            calculateLayout();
+            updateActiveItems();
+        };
+
+        window.addEventListener("resize", handleResize);
+        handleResize();
+
+        return () => window.removeEventListener("resize", handleResize);
+    }, [calculateColumnWidth, calculateLayout, updateActiveItems]);
 
     useEffect(() => {
         const fillViewportWithContent = async () => {
             if (!containerRef.current || !gridRef.current) return;
 
-            // Calculate if content is smaller than the viewport height
             while (
                 gridRef.current.scrollHeight <= containerRef.current.clientHeight &&
                 !isFetchingNextPage &&
@@ -102,7 +124,7 @@ export const MasonryGrid = () => {
         };
 
         fillViewportWithContent();
-    }, [photos, isFetchingNextPage, isFetchNextPageError]);
+    }, [photos, isFetchingNextPage, isFetchNextPageError, fetchNextPage]);
 
     useEffect(() => {
         calculateLayout();
@@ -120,27 +142,13 @@ export const MasonryGrid = () => {
         }
     }, [handleScroll]);
 
-    useEffect(() => {
-        const handleResize = () => {
-            calculateColumnWidth();
-            if (photos.length > 0) {
-                calculateLayout();
-                updateActiveItems();
-            }
-        };
-
-        window.addEventListener("resize", handleResize);
-        handleResize();
-        return () => window.removeEventListener("resize", handleResize);
-    }, [photos.length]);
-
     const loader = useMemo(
         () => (
             <LoaderWrapperBottom>
                 <Loader hasContainer />
             </LoaderWrapperBottom>
         ),
-        [isFetchingNextPage]
+        []
     );
 
     if (hasError || isFetchNextPageError) {
